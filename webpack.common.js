@@ -3,19 +3,52 @@ const NodeExternals = require('webpack-node-externals');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
+/********************************************************************
+ *        Shared Config
+ ********************************************************************/
+const tsModule =   {
+  module: {
+    rules: [
+      { 
+        test: /\.tsx?$/, 
+        use: {
+        loader: "ts-loader",
+        options: { experimentalWatchApi: true },
+        },
+      }
+    ],
+  },
+}
+
+const tsResolve = {
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", "jsx", ".json"],
+    plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})]
+  }
+}
+
+/********************************************************************
+ *        Client Config
+ ********************************************************************/
 const clientConfig = {
-  entry: './src-client/index.js',
+  entry: './src-client/index.ts',
   output: {
-    path: path.resolve(__dirname, 'build', 'public', 'dist'),
-    filename: 'index.bundle.js'
+    path: path.resolve(__dirname, 'build', 'public'),
+    filename: 'dist/index.bundle.js'
   },
   target: "web",
   plugins: [
     new CopyPlugin([
-      {from: 'public', to: '..'}
+      {from: 'public', to: '.'}
     ])
-  ]
+  ],
+  ...tsModule,
+  ...tsResolve,
 }
+
+/********************************************************************
+ *        Server Config
+ ********************************************************************/
 const serverConfig = {
   entry: "./src-server/main.ts",
   externals: [NodeExternals()],
@@ -24,27 +57,16 @@ const serverConfig = {
     __dirname: false,
     __filename: false,
   },
-  module: {
-    rules: [
-      { 
-        test: /\.tsx?$/, 
-        use: {
-         loader: "ts-loader",
-         options: { experimentalWatchApi: true },
-        },
-         exclude: '/node_modules/' 
-      }
-    ],
-  },
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: "main.js",
   },
-  resolve: {
-    extensions: [".ts", ".tsx", ".js"],
-    plugins: [new TsconfigPathsPlugin({configFile: './tsconfig.json'})]
-  },
+  ...tsModule,
+  ...tsResolve,
 };
 
+/********************************************************************
+ *        Exports
+ ********************************************************************/
 module.exports.client = clientConfig;
 module.exports.server = serverConfig;
