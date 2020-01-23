@@ -2,7 +2,8 @@ import path from 'path'
 import express from 'express';
 import http from 'http';
 
-import module from '@server/module';
+import moduleA from '@server/module-A';
+import moduleB from '@server/module-A';
 
 const port = 7878;
 const url = 'localhost';
@@ -20,9 +21,18 @@ server.listen(port, url);
 // Config server
 app.use(express.json());
 
-app.get('/lol', (req, res) => {
-    module();
-    res.redirect('/');
+function print(s: string) {
+    console.log(s);
+}
+
+app.get('/', (req, res, next) => {
+    let a = moduleA();
+    print(a);
+    
+    let b = moduleB();
+    print(b);
+
+    next();
 });
 
 app.use(staticUrl, express.static(staticDir));

@@ -16,7 +16,14 @@ const serverConfig = {
   target: "node",
   module: {
     rules: [
-      { test: /\.tsx?$/, use: "ts-loader", exclude: '/node_modules/' }
+      { 
+        test: /\.tsx?$/, 
+        use: {
+         loader: "ts-loader",
+         options: { experimentalWatchApi: true },
+        },
+         exclude: '/node_modules/' 
+      }
     ],
   },
   output: {
@@ -29,5 +36,5 @@ const serverConfig = {
   },
 };
 
-module.exports.client = clientConfig
+module.exports.client = clientConfig;
 module.exports.server = serverConfig;
