@@ -1,19 +1,29 @@
 const path = require('path');
 const NodeExternals = require('webpack-node-externals');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const clientConfig = {
   entry: './src-client/index.js',
   output: {
-    path: path.resolve(__dirname, 'public', 'dist'),
+    path: path.resolve(__dirname, 'build', 'public', 'dist'),
     filename: 'index.bundle.js'
   },
   target: "web",
+  plugins: [
+    new CopyPlugin([
+      {from: 'public', to: '..'}
+    ])
+  ]
 }
 const serverConfig = {
   entry: "./src-server/main.ts",
   externals: [NodeExternals()],
   target: "node",
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
   module: {
     rules: [
       { 

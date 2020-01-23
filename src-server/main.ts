@@ -3,12 +3,12 @@ import express from 'express';
 import http from 'http';
 
 import moduleA from '@server/module-A';
-import moduleB from '@server/module-A';
+import moduleB from '@server/module-B';
 
 const port = 7878;
 const url = 'localhost';
 const staticUrl = '/';
-const staticDir = path.join('.', 'public');
+const staticDir = path.join(__dirname, 'public');
 
 const app = express();
 const server = http.createServer(app);
